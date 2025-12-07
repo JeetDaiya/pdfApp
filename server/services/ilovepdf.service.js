@@ -69,7 +69,7 @@ export async function compressPDFService(filePath, originalName) {
   const fileStream = await axios.get(
     `https://${server}/v1/download/${task}`,
     { 
-      responseType: "arraybuffer",
+      responseType: "stream",
       headers: { Authorization: `Bearer ${token}` }
     }
   );
@@ -80,8 +80,13 @@ export async function compressPDFService(filePath, originalName) {
   if (!fs.existsSync("processed")) {
     fs.mkdirSync("processed");
   }
-  
-  fs.writeFileSync(outputPath, fileStream.data);
+  const writer = fs.createWriteStream(outputPath);
+  fileStream.data.pipe(writer);
+  await new Promise((resolve, reject) => {
+    writer.on("finish", resolve);
+    writer.on("error", reject);
+  });
+
   console.log("Finished:", outputPath);
 
   return outputPath;

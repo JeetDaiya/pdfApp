@@ -14,8 +14,13 @@ export async function compressPDF (req,res){
                     fs.unlink(outputPath,()=>{})
             }
 
-            if(err && !res.headersSent){
-                res.status(500).send("Transfer Failed");
+            if (err) {
+                console.log("Download interrupted/failed:", err.message);
+                if (!res.headersSent) {
+                    res.status(500).send("Transfer Failed");
+                }
+            } else {
+                console.log("File sent successfully.");
             }
             
         })
