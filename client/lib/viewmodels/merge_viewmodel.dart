@@ -1,8 +1,8 @@
 import 'dart:io';
-import 'package:client/utils/ensure_storage_permission.dart';
 import '../services/merge_service.dart';
 import 'package:flutter/foundation.dart';
 
+import '../utils/file_info_storage_service.dart';
 import '../utils/save_to_device.dart';
 
 class MergeViewModel extends ChangeNotifier {
@@ -46,6 +46,7 @@ class MergeViewModel extends ChangeNotifier {
         notifyListeners();
         return false;
       }else{
+        await FileInfoStorageService.saveFile(mergedFile!.path);
         return true;
       }
 
@@ -60,9 +61,9 @@ class MergeViewModel extends ChangeNotifier {
   }
 
   Future<bool>saveToDevice() async{
-    final isSaved = await SaveToDeviceService.saveToDevice(mergedFile!);
+    final success = await SaveToDeviceService.saveToDevice(mergedFile!);
 
-    if (isSaved) {
+    if (success) {
       // Since SaveToDevice deletes the temp file, we should clear
       // compressedFile so the UI doesn't try to "Open" a deleted file.
       mergedFile = null;

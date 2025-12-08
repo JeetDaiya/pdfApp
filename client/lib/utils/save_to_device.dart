@@ -12,14 +12,7 @@ class SaveToDeviceService{
           fileName: basename(file.path)
         );
         final result = await FlutterFileDialog.saveFile(params : params);
-        if(result != null){
-          if(await file.exists()){
-            await file.delete();
-          }
-          return true;
-        }else {
-          return false;
-        }
+        return result != null;
       }catch(error){
         throw Exception('Failed to save file to device $error');
       }

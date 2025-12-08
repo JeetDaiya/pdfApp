@@ -1,10 +1,15 @@
-import 'package:client/screens/compress_screen.dart';
-import 'package:client/screens/merge_screen.dart';
+import 'package:client/screens/main_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:hive_ce_flutter/hive_flutter.dart';
+
+import 'models/processed_file_model.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Hive.initFlutter();
+  Hive.registerAdapter(ProcessedFileAdapter());
+  await Hive.openBox<ProcessedFile>('processedFiles');
   await FilePicker.platform.clearTemporaryFiles();
   runApp(const MyApp());
 }
@@ -37,7 +42,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MergeScreen()
+      home: const HomeScreen()
     );
   }
 }

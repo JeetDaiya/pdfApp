@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'package:client/theme/gradient.dart';
+import 'package:client/widgets/appBar.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:open_file/open_file.dart';
@@ -77,24 +79,11 @@ class _MergeScreenState extends State<MergeScreen> {
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            Color.fromARGB(255, 245, 245, 245),
-            Color.fromARGB(255, 39, 245, 245),
-            Color.fromARGB(255, 39, 230, 245),
-            Color.fromARGB(255, 39, 210, 245)
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        gradient: MyAppGradient.myAppGradient,
       ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        appBar: AppBar(
-          title: const Text('Merge PDFs'),
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-        ),
+        appBar: const MyAppBar(title: 'Merge PDF'),
         body: AnimatedBuilder(
           animation: _viewModel,
           builder: (context, child) {

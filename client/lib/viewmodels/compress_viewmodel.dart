@@ -1,9 +1,8 @@
 import 'dart:io';
+import 'package:client/utils/file_info_storage_service.dart';
 import 'package:client/utils/save_to_device.dart';
 import '../services/compress_service.dart';
 import 'package:flutter/foundation.dart';
-
-import '../utils/ensure_storage_permission.dart';
 
 class CompressViewModel extends ChangeNotifier {
   final PdfCompressService _service = PdfCompressService();
@@ -40,7 +39,7 @@ class CompressViewModel extends ChangeNotifier {
             errorMessage = 'Failed to compress PDF (Server returned null)';
             return false; // Return failure
           }
-
+          await FileInfoStorageService.saveFile(compressedFile!.path);
           return true;
 
       }catch(error){
@@ -53,9 +52,9 @@ class CompressViewModel extends ChangeNotifier {
   }
 
   Future<bool>saveToDevice() async{
-    final isSaved = await SaveToDeviceService.saveToDevice(compressedFile!);
+    final success = await SaveToDeviceService.saveToDevice(compressedFile!);
 
-    if (isSaved) {
+    if (success) {
       // Since SaveToDevice deletes the temp file, we should clear
       // compressedFile so the UI doesn't try to "Open" a deleted file.
       compressedFile = null;
