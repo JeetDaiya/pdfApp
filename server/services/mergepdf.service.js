@@ -3,7 +3,6 @@ import fs from "fs";
 import path from "path";
 import axios from "axios";
 import FormData from "form-data";
-import { log } from "console";
 
 const BASE_URL = "https://api.ilovepdf.com/v1";
 

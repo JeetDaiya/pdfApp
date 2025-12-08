@@ -1,4 +1,5 @@
 import 'package:client/screens/compress_screen.dart';
+import 'package:client/screens/merge_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 

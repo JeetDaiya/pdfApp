@@ -1,14 +1,15 @@
 import 'dart:io';
+import 'package:client/utils/download_file.dart';
 import 'package:dio/dio.dart';
 import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
 
 class PdfCompressService{
   final Dio _dio = Dio();
 
-  Future<File> compressPdf(File pdfFile) async {
+  Future<File> compressPdf(File pdfFile, String compressionLevel) async {
       final formData = FormData.fromMap({
         'file': await MultipartFile.fromFile(pdfFile.path),
+        'compressionLevel': compressionLevel,
       });
 
       final response = await _dio.post(
@@ -22,13 +23,8 @@ class PdfCompressService{
           }
         ),
       );
-        final directory = await getApplicationDocumentsDirectory();
         final fileName = basenameWithoutExtension(pdfFile.path);
-        final outputFilePath = join(directory.path, '${fileName}_compressed.pdf');
-        final File outputFile = File(outputFilePath);
-        await outputFile.writeAsBytes(response.data);
-        print("✅ File saved to: $outputFilePath");
-        return outputFile;
+        return await DownloadService.downloadFile(fileName, 'compressed', response);
   }
 
 

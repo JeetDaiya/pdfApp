@@ -4,8 +4,9 @@ import fs from 'fs';
 export async function compressPDF (req,res){
     const originalName = req.file.originalname;
     const filepath = req.file.path;
+    console.log(req.body.compressionLevel);
     const compressionLevel = req.body.compressionLevel || 'recommended';
-
+    
     try {
         const outputPath = await compressPDFService(filepath, originalName, compressionLevel);
         const absolutePath = path.resolve(outputPath);
