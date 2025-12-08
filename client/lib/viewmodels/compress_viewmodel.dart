@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:client/utils/save_to_device.dart';
-
 import '../services/compress_service.dart';
 import 'package:flutter/foundation.dart';
 

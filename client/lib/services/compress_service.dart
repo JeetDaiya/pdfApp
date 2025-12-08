@@ -13,7 +13,7 @@ class PdfCompressService{
       });
 
       final response = await _dio.post(
-        "http://10.0.2.2:4000/api/pdf/compress",
+        "https://pdfapp-xkt4.onrender.com/api/pdf/compress",
         data: formData,
         options: Options(
           responseType: ResponseType.bytes,

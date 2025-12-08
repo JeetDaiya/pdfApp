@@ -1,19 +1,24 @@
 import 'dart:io';
 import 'package:client/utils/ensure_storage_permission.dart';
-
 import '../services/merge_service.dart';
 import 'package:flutter/foundation.dart';
+
+import '../utils/save_to_device.dart';
 
 class MergeViewModel extends ChangeNotifier {
   final PdfMergeService _service = PdfMergeService();
 
-  late List<File> selectedFiles;
+  late List<File> selectedFiles = [];
   File? mergedFile;
   bool isLoading = false;
   String? errorMessage ;
 
+  void removeFile(int index){
+    selectedFiles.removeAt(index);
+    notifyListeners();
+  }
 
-  Future<void>selectFile(List<File> inputFiles) async{
+  Future<void>selectFiles(List<File> inputFiles) async{
     selectedFiles = inputFiles;
     mergedFile = null;
     errorMessage = null;
@@ -23,19 +28,11 @@ class MergeViewModel extends ChangeNotifier {
 
 
 
-  Future<void> merge() async{
+  Future<bool> merge() async{
     if(selectedFiles.isEmpty){
       errorMessage = 'No File Selected';
       notifyListeners();
-      return;
-    }
-
-    final hasPermission = await StoragePermission.ensureStoragePermission();
-
-    if(!hasPermission){
-      errorMessage = 'Storage permission denied';
-      notifyListeners();
-      return;
+      return false;
     }
 
     try{
@@ -47,18 +44,35 @@ class MergeViewModel extends ChangeNotifier {
       if(mergedFile == null){
         errorMessage = 'Failed to merge PDF';
         notifyListeners();
-        return;
+        return false;
+      }else{
+        return true;
       }
-
-      notifyListeners();
-
 
     }catch(error){
       errorMessage = 'Failed to compress PDF $error';
+      return false;
 
     }finally{
       isLoading = false;
       notifyListeners();
+    }
+  }
+
+  Future<bool>saveToDevice() async{
+    final isSaved = await SaveToDeviceService.saveToDevice(mergedFile!);
+
+    if (isSaved) {
+      // Since SaveToDevice deletes the temp file, we should clear
+      // compressedFile so the UI doesn't try to "Open" a deleted file.
+      mergedFile = null;
+      errorMessage = null; // Clear error if any
+      notifyListeners();
+      return true;
+    } else {
+      errorMessage = 'Save Cancelled!';
+      notifyListeners();
+      return false;
     }
   }
 }
