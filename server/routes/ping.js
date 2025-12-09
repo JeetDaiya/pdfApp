@@ -1,9 +1,9 @@
 // server/routes/ping.js
 const express = require("express");
-const router = express.Router();
+const pingRouter = express.Router();
 
-router.get("/ping", (req, res) => {
+pingRouter.get("/ping", (req, res) => {
   res.status(200).json({ message: "pong" });
 });
 
-module.exports = router;
+module.exports = pingRouter;

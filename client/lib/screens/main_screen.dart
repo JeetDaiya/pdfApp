@@ -26,7 +26,6 @@ class _HomeScreenState extends State<HomeScreen> {
         });
         await Future.delayed(const Duration(seconds: 2));
         await ServerPinger.warmUp();
-        FlutterNativeSplash.remove();
         setState(() {
           _isLoading = false;
         });

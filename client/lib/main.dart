@@ -7,7 +7,6 @@ import 'models/processed_file_model.dart';
 
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
-  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   await Hive.initFlutter();
   Hive.registerAdapter(ProcessedFileAdapter());
   await Hive.openBox<ProcessedFile>('processedFiles');
