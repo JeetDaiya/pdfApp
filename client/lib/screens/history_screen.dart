@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:client/utils/download_file.dart';
 import 'package:client/utils/save_to_device.dart';
 import 'package:intl/intl.dart';
 import 'package:client/widgets/appBar.dart';

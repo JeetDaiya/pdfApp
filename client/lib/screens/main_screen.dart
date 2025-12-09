@@ -1,108 +1,151 @@
 import 'package:client/theme/gradient.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 import 'compress_screen.dart';
 import 'history_screen.dart';
 import 'merge_screen.dart';
-// Import your other screens here
-// import 'merge_screen.dart';
-// import 'compress_screen.dart';
+import 'package:client/utils/server_pinger.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+
+  bool? _isLoading;
+  String _error = '';
+
+  void initService() async{
+      try {
+        setState(() {
+          _isLoading = true;
+        });
+        await Future.delayed(const Duration(seconds: 2));
+        await ServerPinger.warmUp();
+        FlutterNativeSplash.remove();
+        setState(() {
+          _isLoading = false;
+        });
+      }catch(error){
+        setState(() {
+          _error = error.toString();
+          _isLoading = false;
+        });
+        return;
+      }
+  }
+
+
+  @override
   Widget build(BuildContext context) {
-    // Reuse the exact same gradient from your MergeScreen
-    return Container(
-      decoration: const BoxDecoration(
-        gradient: MyAppGradient.myAppGradient,
-      ),
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        appBar: AppBar(
-          title: const Text(
-            'PDF Master',
-            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),
-          ),
-          centerTitle: true,
+   if(_isLoading != null && _error.isNotEmpty){
+      return Center(
+        child: Column(
+          children: [
+            const Text('Error Occurred While Connecting to Server'),
+            const SizedBox(height: 10),
+            ElevatedButton(onPressed: initService, child: const Text('Retry'))
+          ]
+        ),
+      );
+    }else if(_isLoading != null && _error.isEmpty){
+      return Container(
+        decoration: const BoxDecoration(
+          gradient: MyAppGradient.myAppGradient,
+        ),
+        child: Scaffold(
           backgroundColor: Colors.transparent,
-          elevation: 0,
-        ),
-        body: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                "What would you like to do?",
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black54,
+          appBar: AppBar(
+            title: const Text(
+              'PDF Master',
+              style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),
+            ),
+            centerTitle: true,
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+          ),
+          body: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  "What would you like to do?",
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black54,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 20),
+                const SizedBox(height: 20),
 
-              // Grid Layout for Tools
-              Expanded(
-                child: GridView.count(
-                  crossAxisCount: 2, // 2 Columns
-                  crossAxisSpacing: 16,
-                  mainAxisSpacing: 16,
-                  childAspectRatio: 0.9, // Make cards slightly taller
-                  children: [
-                    // 1. Merge Card
-                    _HomeOptionCard(
-                      title: "Merge PDF",
-                      icon: Icons.merge_type,
-                      color: Colors.blue.shade600,
-                      description: "Combine multiple files",
-                      onTap: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (_) => const MergeScreen()));
-                      },
-                    ),
+                // Grid Layout for Tools
+                Expanded(
+                  child: GridView.count(
+                    crossAxisCount: 2, // 2 Columns
+                    crossAxisSpacing: 16,
+                    mainAxisSpacing: 16,
+                    childAspectRatio: 0.9, // Make cards slightly taller
+                    children: [
+                      // 1. Merge Card
+                      _HomeOptionCard(
+                        title: "Merge PDF",
+                        icon: Icons.merge_type,
+                        color: Colors.blue.shade600,
+                        description: "Combine multiple files",
+                        onTap: () {
+                          Navigator.push(context, MaterialPageRoute(builder: (_) => const MergeScreen()));
+                        },
+                      ),
 
-                    // 2. Compress Card
-                    _HomeOptionCard(
-                      title: "Compress PDF",
-                      icon: Icons.compress,
-                      color: Colors.orange.shade600,
-                      description: "Reduce file size",
-                      onTap: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (_) => const CompressScreen()));
-                      },
-                    ),
+                      // 2. Compress Card
+                      _HomeOptionCard(
+                        title: "Compress PDF",
+                        icon: Icons.compress,
+                        color: Colors.orange.shade600,
+                        description: "Reduce file size",
+                        onTap: () {
+                          Navigator.push(context, MaterialPageRoute(builder: (_) => const CompressScreen()));
+                        },
+                      ),
 
-                    // 3. Image to PDF (The "Something Else")
-                    _HomeOptionCard(
-                      title: "Image to PDF",
-                      icon: Icons.image_outlined,
-                      color: Colors.purple.shade500,
-                      description: "Convert photos to PDF",
-                      onTap: () {
-                        // Navigate to Image to PDF Screen
-                      },
-                    ),
+                      // 3. Image to PDF (The "Something Else")
+                      _HomeOptionCard(
+                        title: "Image to PDF",
+                        icon: Icons.image_outlined,
+                        color: Colors.purple.shade500,
+                        description: "Convert photos to PDF",
+                        onTap: () {
+                          // Navigate to Image to PDF Screen
+                        },
+                      ),
 
-                    // 4. My Files / History
-                    _HomeOptionCard(
-                      title: "My Files",
-                      icon: Icons.folder_open,
-                      color: Colors.teal.shade600,
-                      description: "View processed files",
-                      onTap: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (_) => const HistoryScreen()));
-                      },
-                    ),
-                  ],
+                      // 4. My Files / History
+                      _HomeOptionCard(
+                        title: "My Files",
+                        icon: Icons.folder_open,
+                        color: Colors.teal.shade600,
+                        description: "View processed files",
+                        onTap: () {
+                          Navigator.push(context, MaterialPageRoute(builder: (_) => const HistoryScreen()));
+                        },
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
-      ),
-    );
+      );
+    }
+   return const Center(
+     child: CircularProgressIndicator(),
+   );
   }
 }
 

@@ -2,11 +2,12 @@ import 'package:client/screens/main_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
-
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'models/processed_file_model.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   await Hive.initFlutter();
   Hive.registerAdapter(ProcessedFileAdapter());
   await Hive.openBox<ProcessedFile>('processedFiles');
